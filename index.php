@@ -93,6 +93,7 @@ $genereSelezionato = $_GET["genere"] ?? "";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title><?= e($titolo) ?></title>
 </head>
     <body>
@@ -100,33 +101,39 @@ $genereSelezionato = $_GET["genere"] ?? "";
             <h1><?= e($titolo) ?></h1>
 
             <form method="get" action="index.php">
-                <label for="ricerca">Cerca un libro</label>
+                <div class="filters-field">
+                    <label for="ricerca">Cerca un libro</label>
 
-                <input
-                    type="search"
-                    id="ricerca"
-                    name="q"
-                    placeholder="Scrivi un titolo"
-                    value="<?= e($ricerca) ?>"
-                >
+                    <input
+                        type="search"
+                        id="ricerca"
+                        name="q"
+                        placeholder="Scrivi un titolo"
+                        value="<?= e($ricerca) ?>"
+                    >
+                </div>
 
-                <label for="genere">Genere</label>
+                <div class="filters-field">
+                    <label for="genere">Genere</label>
 
-                <select id="genere" name="genere">
-                    <option value="">Tutti i generi</option>
+                    <select id="genere" name="genere">
+                        <option value="">Tutti i generi</option>
 
-                    <?php foreach ($generi as $genere): ?>
-                        <option
-                            value="<?= e($genere) ?>"
-                            <?= $genere === $genereSelezionato ? "selected" : "" ?>
-                        >
-                            <?= e($genere) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                        <?php foreach ($generi as $genere): ?>
+                            <option
+                                value="<?= e($genere) ?>"
+                                <?= $genere === $genereSelezionato ? "selected" : "" ?>
+                            >
+                                <?= e($genere) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-                <button type="submit">Filtra</button>
-                <a href="index.php">Reset filtri</a>
+                <div class="filters-actions">
+                    <button type="submit">Filtra</button>
+                    <a href="index.php">Reset filtri</a>
+                </div>
             </form>
 
             <p>
@@ -135,28 +142,30 @@ $genereSelezionato = $_GET["genere"] ?? "";
             </p>
 
             <?php if (count($libriFiltrati) === 0): ?>
-                <p>Nessun libro trovato. Prova con un altro titolo.</p>
+                <p>Nessun libro trovato. Prova a cambiare i filtri.</p>
             <?php else: ?>
-                <?php foreach ($libriFiltrati as $libro): ?>
-                    <article>
-                        <h2><?= e($libro["titolo"]) ?></h2>
+                <div class="books-grid">
+                    <?php foreach ($libriFiltrati as $libro): ?>
+                        <article class="book-card">
+                            <h2><?= e($libro["titolo"]) ?></h2>
 
-                        <p>
-                            <strong>Autore:</strong>
-                            <?= e($libro["autore"]) ?>
-                        </p>
+                            <p>
+                                <strong>Autore:</strong>
+                                <?= e($libro["autore"]) ?>
+                            </p>
 
-                        <p>
-                            <strong>Genere:</strong>
-                            <?= e($libro["genere"]) ?>
-                        </p>
+                            <p>
+                                <strong>Genere:</strong>
+                                <?= e($libro["genere"]) ?>
+                            </p>
 
-                        <p>
-                            <strong>Anno:</strong>
-                            <?= $libro["anno"] ?>
-                        </p>
-                    </article>
-                <?php endforeach; ?>
+                            <p>
+                                <strong>Anno:</strong>
+                                <?= $libro["anno"] ?>
+                            </p>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
         </main>
     </body>
