@@ -1,35 +1,9 @@
 <?php
+
+require_once __DIR__ . "/books.php";
+require_once __DIR__ . "/helpers.php";
+
 $titolo = "Il mio catalogo di libri";
-
-$libri = [
-    [
-        "titolo" => "Il piccolo principe",
-        "autore" => "Antoine de Saint-Exupéry",
-        "genere" => "Narrativa",
-        "anno" => 1943,
-    ],
-    [
-        "titolo" => "1984",
-        "autore" => "George Orwell",
-        "genere" => "Distopia",
-        "anno" => 1949,
-    ],
-    [
-        "titolo" => "Siddharta",
-        "autore" => "Hermann Hesse",
-        "genere" => "Romanzo",
-        "anno" => 1922,
-    ],
-];
-
-function e(string $testo): string
-{
-    return htmlspecialchars(
-        $testo, 
-        ENT_QUOTES | ENT_SUBSTITUTE, 
-        "UTF-8"
-    );
-}
 
 $ricerca = $_GET["q"] ?? "";
 
@@ -163,6 +137,10 @@ $genereSelezionato = $_GET["genere"] ?? "";
                                 <strong>Anno:</strong>
                                 <?= $libro["anno"] ?>
                             </p>
+
+                            <a href="book.php?id=<?= $libro["id"] ?>">
+                                Leggi i dettagli
+                            </a>
                         </article>
                     <?php endforeach; ?>
                 </div>
