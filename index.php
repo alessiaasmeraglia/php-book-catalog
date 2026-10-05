@@ -46,6 +46,44 @@ $libriFiltrati = array_filter(
                 || stripos($libro["titolo"], $ricerca) !== false;
         }
     );
+
+$ricerca = $_GET["q"] ?? "";
+$genereSelezionato = $_GET["genere"] ?? "";
+
+    if (!is_string($ricerca)) {
+        $ricerca = "";
+    }
+
+    if (!is_string($genereSelezionato)) {
+        $genereSelezionato = "";
+    }
+
+    $ricerca = trim($ricerca);
+
+    // Ricaviamo i generi dai libri, eliminando i duplicati.
+    $generi = array_unique(array_column($libri, "genere"));
+    sort($generi);
+
+    // Accettiamo solo generi presenti nel catalogo.
+    if (
+        $genereSelezionato !== ""
+        && !in_array($genereSelezionato, $generi, true)
+    ) {
+        $genereSelezionato = "";
+    }
+
+    $libriFiltrati = array_filter(
+        $libri,
+        function (array $libro) use ($ricerca, $genereSelezionato): bool {
+            $corrispondeTitolo = $ricerca === ""
+                || stripos($libro["titolo"], $ricerca) !== false;
+
+            $corrispondeGenere = $genereSelezionato === ""
+                || $libro["genere"] === $genereSelezionato;
+
+            return $corrispondeTitolo && $corrispondeGenere;
+        }
+    );
 ?>
 
 
@@ -72,8 +110,23 @@ $libriFiltrati = array_filter(
                     value="<?= e($ricerca) ?>"
                 >
 
-                <button type="submit">Cerca</button>
-                <a href="index.php">Mostra tutti</a>
+                <label for="genere">Genere</label>
+
+                <select id="genere" name="genere">
+                    <option value="">Tutti i generi</option>
+
+                    <?php foreach ($generi as $genere): ?>
+                        <option
+                            value="<?= e($genere) ?>"
+                            <?= $genere === $genereSelezionato ? "selected" : "" ?>
+                        >
+                            <?= e($genere) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <button type="submit">Filtra</button>
+                <a href="index.php">Reset filtri</a>
             </form>
 
             <p>
