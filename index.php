@@ -24,9 +24,31 @@ $libri = [
 
 function e(string $testo): string
 {
-    return htmlspecialchars($testo, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
+    return htmlspecialchars(
+        $testo, 
+        ENT_QUOTES | ENT_SUBSTITUTE, 
+        "UTF-8"
+    );
 }
+
+$ricerca = $_GET["q"] ?? "";
+
+if (!is_string($ricerca)) {
+    $ricerca = "";
+}
+
+$ricerca = trim($ricerca);
+
+$libriFiltrati = array_filter(
+        $libri,
+        function (array $libro) use ($ricerca): bool {
+            return $ricerca === ""
+                || stripos($libro["titolo"], $ricerca) !== false;
+        }
+    );
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="it">
@@ -35,32 +57,54 @@ function e(string $testo): string
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($titolo) ?></title>
 </head>
-<body>
-    <main>
-        <h1><?= e($titolo) ?></h1>
+    <body>
+        <main>
+            <h1><?= e($titolo) ?></h1>
 
-        <p>Libri nel catalogo: <?= count($libri) ?></p>
+            <form method="get" action="index.php">
+                <label for="ricerca">Cerca un libro</label>
 
-        <?php foreach ($libri as $libro): ?>
-            <article>
-                <h2><?= e($libro["titolo"]) ?></h2>
+                <input
+                    type="search"
+                    id="ricerca"
+                    name="q"
+                    placeholder="Scrivi un titolo"
+                    value="<?= e($ricerca) ?>"
+                >
 
-                <p>
-                    <strong>Autore:</strong>
-                    <?= e($libro["autore"]) ?>
-                </p>
+                <button type="submit">Cerca</button>
+                <a href="index.php">Mostra tutti</a>
+            </form>
 
-                <p>
-                    <strong>Genere:</strong>
-                    <?= e($libro["genere"]) ?>
-                </p>
+            <p>
+                Libri trovati: <?= count($libriFiltrati) ?>
+                su <?= count($libri) ?>
+            </p>
 
-                <p>
-                    <strong>Anno:</strong>
-                    <?= $libro["anno"] ?>
-                </p>
-            </article>
-        <?php endforeach; ?>
-    </main>
-</body>
+            <?php if (count($libriFiltrati) === 0): ?>
+                <p>Nessun libro trovato. Prova con un altro titolo.</p>
+            <?php else: ?>
+                <?php foreach ($libriFiltrati as $libro): ?>
+                    <article>
+                        <h2><?= e($libro["titolo"]) ?></h2>
+
+                        <p>
+                            <strong>Autore:</strong>
+                            <?= e($libro["autore"]) ?>
+                        </p>
+
+                        <p>
+                            <strong>Genere:</strong>
+                            <?= e($libro["genere"]) ?>
+                        </p>
+
+                        <p>
+                            <strong>Anno:</strong>
+                            <?= $libro["anno"] ?>
+                        </p>
+                    </article>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </main>
+    </body>
 </html>
